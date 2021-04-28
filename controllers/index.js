@@ -46,9 +46,15 @@ const createUsuario = async (req, res) => {
 const getPersonas = async (req, res) => {
     console.log('Personas...');
     try {
-        const personas = await models.Persona.findAll({
-            include: []
+        const personas = await models.Usuario.findAll({
+            include: [
+                {
+                    model: models.Persona,
+                    as: "persona"
+                }
+            ]
         });
+        
         return res.status(200).json({personas});
     } catch (e) {
         res.status(500).json({error:error.message});
@@ -59,9 +65,9 @@ const getUsuario = async (req, res) => {
     console.log('Personas...');
     try {
         const persona = await models.Persona.findAll({
+
             where: {
-                correo:req.query.correo,
-                contraseña: req.query.contraseña
+                correo:req.query.correo
             }
         });
         return res.status(200).json({persona});
