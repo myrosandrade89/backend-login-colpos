@@ -35,7 +35,7 @@ const createUsuario = async (req, res) => {
                 usuario
             });
         } else {
-            return res.status(500).json({ error: "Usuario ya registrado" });
+            return res.status(404).json({ error: "Usuario ya registrado" });
         }
 
     } catch(error) {
@@ -43,38 +43,73 @@ const createUsuario = async (req, res) => {
     }
 };
 
-const getPersonas = async (req, res) => {
-    console.log('Personas...');
+const getUsuarios = async (req, res) => {
     try {
-        const personas = await models.Usuario.findAll({
+        const usuarios = await models.Usuario.findAll({
             include: [
                 {
-                    model: models.Persona,
-                    as: "persona"
+                    model: models.Persona
+                },
+                {
+                    model: models.Ubicacion
                 }
             ]
         });
-        
-        return res.status(200).json({personas});
+        return res.status(200).json({usuarios});
     } catch (e) {
-        res.status(500).json({error:error.message});
+        res.status(500).json({error:e.message});
     }
 };
 
 const getUsuario = async (req, res) => {
     console.log('Personas...');
     try {
-        const persona = await models.Persona.findAll({
+        const usuario = await models.Usuario.findAll({
 
             where: {
-                correo:req.query.correo
-            }
+                numeroTelefonico: req.body.numeroTelefonico
+            },
+            include: [
+                {
+                    model: models.Persona
+                },
+                {
+                    model: models.Ubicacion
+                }
+            ]
         });
-        return res.status(200).json({persona});
+        return res.status(201).json({usuario});
     } catch (e) {
-        res.status(500).json({error:error.message});
+        res.status(500).json({error:e.message});
     }
 };
+
+
+const updateUsuario = async(req, res) => {
+    console.log('Actualizando...');
+    try {
+        const { correo } = req.params;
+        const datos = req.body;
+        const datosPersona = {
+            nombre: datos.nombre,
+            apellido: datos.apellido,
+            correo: datos.correo,
+            contraseña: datos.contraseña
+        }
+        const [updated] = await models.Persona.update(datosPersona,{
+            where: {
+                correo: correo
+            },
+        });
+        if (updated) {
+          const updatedPersona = await models.Persona.findOne({ where: { correo: correo} });
+          return res.status(201).json({ post: updatedPersona });
+        }
+        throw new Error("Usuario no encontrado");
+    } catch(e) {
+        res.status(500).json({error: e.message});
+    }
+}
 
 const deleteUsuario = async(req, res) => {
     console.log("Eliminado usuario...");
@@ -86,13 +121,14 @@ const deleteUsuario = async(req, res) => {
         })
         return res.status(200).json({usuarioEliminado})
     } catch(e) {
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: e.message});
     }
 }
 
 module.exports = {
     createUsuario,
-    getPersonas,
+    getUsuarios,
     getUsuario,
-    deleteUsuario
+    deleteUsuario,
+    updateUsuario
 }

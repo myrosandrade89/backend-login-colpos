@@ -5,8 +5,9 @@ const router = Router();
 
 router.get('/', (req,res) => res.send("Welcome"));
 
-router.post('/usuario', controllers.createUsuario);
+router.post('/newUsuario', controllers.createUsuario);
 router.delete('/usuario', controllers.deleteUsuario);
-router.get('/personas', controllers.getPersonas);
-router.get('/usuario', controllers.getUsuario);
+router.get('/usuarios', controllers.getUsuarios);
+router.post('/usuario', controllers.getUsuario);
+router.put('/usuario/:correo',controllers.updateUsuario);
 module.exports = router;
