@@ -88,24 +88,64 @@ const getUsuario = async (req, res) => {
 const updateUsuario = async(req, res) => {
     console.log('Actualizando...');
     try {
-        const { correo } = req.params;
+        const { numeroTelefonico } = req.params;
         const datos = req.body;
+        const datosUsuario = {
+            fechaNacimiento: datos.fechaNacimiento,
+            ocupacion: datos.ocupacion,
+            numeroTelefonico: datos.numeroTelefonico
+        }
         const datosPersona = {
             nombre: datos.nombre,
             apellido: datos.apellido,
             correo: datos.correo,
             contraseña: datos.contraseña
         }
-        const [updated] = await models.Persona.update(datosPersona,{
+        const datosUbicacion = {
+            codigoPostal: datos.codigoPostal,
+            colonia: datos.colonia,
+            calle: datos.calle
+        }
+        
+        const [updated] = await models.Usuario.update(datosUsuario,{
             where: {
-                correo: correo
+                numeroTelefonico: numeroTelefonico
             },
         });
         if (updated) {
-          const updatedPersona = await models.Persona.findOne({ where: { correo: correo} });
-          return res.status(201).json({ post: updatedPersona });
+          const updatedUsuario = await models.Usuario.findOne({ 
+              where: { numeroTelefonico: datos.numeroTelefonico},
+              include: []
+            });
+            const [updated2] = await models.Persona.update(datosPersona,{
+                where: {
+                    id: updatedUsuario.idPersona
+                },
+            });
+            if (updated2) {
+                const [updated3] = await models.Ubicacion.update(datosUbicacion,{
+                    where: {
+                        id: updatedUsuario.idUbicacion
+                    },
+                });
+                if (updated3) {
+                    const usuario = await models.Usuario.findOne({ 
+                        where: { numeroTelefonico: datos.numeroTelefonico},
+                        include: [
+                            {
+                                model: models.Persona
+                            },
+                            {
+                                model: models.Ubicacion
+                            }
+                        ]
+                    });
+                    return res.status(200).json({ usuario }); 
+                }
+            }
+         
         }
-        throw new Error("Usuario no encontrado");
+        return res.status(404).json({ error:"Usuario no encontrado" }); 
     } catch(e) {
         res.status(500).json({error: e.message});
     }
