@@ -62,12 +62,18 @@ const getUsuarios = async (req, res) => {
 };
 
 const getUsuario = async (req, res) => {
-    console.log('Personas...');
     try {
-        const usuario = await models.Usuario.findAll({
+        const persona = await models.Persona.findAll({
 
             where: {
-                numeroTelefonico: req.body.numeroTelefonico
+                correo: req.body.correo,
+                contraseña: req.body.contraseña
+            },
+
+        });
+        const usuario = await models.Usuario.findAll({
+            where: {
+                idPersona: persona.id
             },
             include: [
                 {
