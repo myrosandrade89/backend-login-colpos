@@ -15,7 +15,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       numeroTelefonico: {
-        type: Sequelize.INTEGER
+        type: Sequelize.BIGINT
       },
       idUbicacion: {
         type: Sequelize.INTEGER,

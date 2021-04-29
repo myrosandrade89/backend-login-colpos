@@ -39,7 +39,8 @@ const createUsuario = async (req, res) => {
         }
 
     } catch(error) {
-        return res.status(500).json({ error: error.message });
+        
+        return res.status(400).json({ error: error.message });
     }
 };
 
@@ -57,7 +58,7 @@ const getUsuarios = async (req, res) => {
         });
         return res.status(200).json({usuarios});
     } catch (e) {
-        res.status(500).json({error:e.message});
+        res.status(400).json({error:e.message});
     }
 };
 
@@ -86,13 +87,12 @@ const getUsuario = async (req, res) => {
         });
         return res.status(201).json({usuario});
     } catch (e) {
-        res.status(500).json({error:e.message});
+        res.status(400).json({error:e.message});
     }
 };
 
 
 const updateUsuario = async(req, res) => {
-    console.log('Actualizando...');
     try {
         const { numeroTelefonico } = req.params;
         const datos = req.body;
@@ -153,12 +153,11 @@ const updateUsuario = async(req, res) => {
         }
         return res.status(404).json({ error:"Usuario no encontrado" }); 
     } catch(e) {
-        res.status(500).json({error: e.message});
+        res.status(400).json({error: e.message});
     }
 }
 
 const deleteUsuario = async(req, res) => {
-    console.log("Eliminado usuario...");
     try {
         const usuarioEliminado = await models.Persona.destroy({
             where: {
@@ -167,7 +166,7 @@ const deleteUsuario = async(req, res) => {
         })
         return res.status(200).json({usuarioEliminado})
     } catch(e) {
-        res.status(500).json({error: e.message});
+        res.status(400).json({error: e.message});
     }
 }
 
