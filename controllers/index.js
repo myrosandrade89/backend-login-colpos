@@ -73,7 +73,7 @@ const getUsuario = async (req, res) => {
 
         });
         if(persona) {
-            const usuario = await models.Usuario.findAll({
+            const usuario = await models.Usuario.findOne({
                 where: {
                     idPersona: persona.id
                 },
