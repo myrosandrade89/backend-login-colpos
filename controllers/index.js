@@ -64,7 +64,7 @@ const getUsuarios = async (req, res) => {
 
 const getUsuario = async (req, res) => {
     try {
-        const persona = await models.Persona.findAll({
+        const [persona] = await models.Persona.findAll({
 
             where: {
                 correo: req.body.correo,
@@ -72,20 +72,25 @@ const getUsuario = async (req, res) => {
             },
 
         });
-        const usuario = await models.Usuario.findAll({
-            where: {
-                idPersona: persona.id
-            },
-            include: [
-                {
-                    model: models.Persona
+        if(persona) {
+            const usuario = await models.Usuario.findAll({
+                where: {
+                    idPersona: persona.id
                 },
-                {
-                    model: models.Ubicacion
-                }
-            ]
-        });
-        return res.status(201).json({usuario});
+                include: [
+                    {
+                        model: models.Persona
+                    },
+                    {
+                        model: models.Ubicacion
+                    }
+                ]
+            });
+            return res.status(201).json({usuario});
+        } else {
+            return res.status(404).json({error:'Usuario no encontrado'})
+        }
+
     } catch (e) {
         res.status(400).json({error:e.message});
     }
