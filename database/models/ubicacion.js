@@ -21,5 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Ubicacion',
   });
+  Ubicacion.associate = function(models) {
+    Ubicacion.hasMany(models.Usuario, {foreignKey: 'id'})
+  };
   return Ubicacion;
 };
